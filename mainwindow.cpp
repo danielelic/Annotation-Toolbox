@@ -23,26 +23,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    machine = new QStateMachine(this);
-
-    sStart = new QState(machine);
-    sConfig = new QState(machine);
-
-    sPathOni = new QState(sConfig);
-    sPathPic = new QState(sConfig);
-
-    sRead = new QState(machine);
-    sSave = new QState(machine);
-    sExit = new QState(machine);
-
-
-    machine->setInitialState(sStart);
-    machine->start();
 }
 
 MainWindow::~MainWindow()
 {
-    delete machine;
+    //delete machine;
     delete ui;
 }
 
@@ -55,7 +40,7 @@ void MainWindow::on_pushButtonStart_clicked()
 {
     emit configTerminated();
     ui->statusBar->showMessage("Ready to start the annotation ...", 2000);
-    cam->start(ui->lineEditPathOni->text().toLocal8Bit().data());
+    cam->start();
 }
 
 void MainWindow::on_toolButtonPathOni_clicked()

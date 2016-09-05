@@ -31,7 +31,7 @@ public:
     Camera();
     ~Camera();
 
-    void start(const char* deviceURI);
+    void start();
     void stop();
     void acquisition();
 private:
@@ -42,13 +42,6 @@ private:
         Process
     };
     State state{State::Stop};
-    openni::Device device;
-    openni::PlaybackControl* playbackControl;
-
-    openni::VideoStream depthStream;
-    openni::VideoFrameRef depthFrame;
-    cv::Mat depthImage;
-
 };
 
 #endif // CAMERA_H

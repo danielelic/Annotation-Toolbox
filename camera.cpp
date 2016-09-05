@@ -22,61 +22,14 @@ Camera::Camera()
 
 }
 
-void Camera::start(const char* deviceURI) {
+void Camera::start() {
     state = State::Start;
-
-    try {
-        // initialize OpenNI
-        openni::OpenNI::initialize();
-
-        auto ret = device.open(deviceURI);
-        if (ret == openni::STATUS_OK) {
-            playbackControl = device.getPlaybackControl();
-            playbackControl->setRepeatEnabled(true);
-        } else {
-            throw std::runtime_error("Can not open device.");
-        }
-        this->acquisition();
-    }
-    catch (std::exception&) {
-        std::cout << openni::OpenNI::getExtendedError() << std::endl;
-    }
 }
 
 void Camera::stop() {
     state = State::Stop;
-    depthStream.destroy();
-    device.close();
-    openni::OpenNI::shutdown();
 }
 
-void Camera::acquisition()
-{
+void Camera::acquisition() {
     state = State::Acquisition;
-
-    depthStream.create(device, openni::SensorType::SENSOR_DEPTH);
-    depthStream.start();
-
-    do {
-        // depth frame
-        depthStream.readFrame(&depthFrame);
-        if (depthFrame.isValid()) {
-            depthImage = cv::Mat(depthFrame.getVideoMode().getResolutionY(),
-                                 depthFrame.getVideoMode().getResolutionX(),
-                                 CV_16UC1,
-                                 (unsigned short*)depthFrame.getData());
-            if (depthImage.cols == 640)
-                cv::resize(depthImage.clone(), depthImage,
-                           cv::Size(depthImage.cols/2,depthImage.rows/2));
-        }
-        cv::Mat depthImage8;
-        const float scaleFactor = 0.05f;
-        depthImage.convertTo(depthImage8, CV_8UC1, scaleFactor);
-        cv::imshow("depthImage8", depthImage8);
-
-        if (cv::waitKey(1) == 27) {
-            qWarning() << "Exit ...";
-            break;
-        }
-    } while (true);
 }
