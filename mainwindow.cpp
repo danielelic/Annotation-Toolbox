@@ -23,11 +23,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    state = State::Start;
 }
 
 MainWindow::~MainWindow()
 {
-    //delete machine;
+    state = State::Stop;
     delete ui;
 }
 
@@ -38,9 +39,12 @@ void MainWindow::on_pushButtonSavePic_clicked()
 
 void MainWindow::on_pushButtonStart_clicked()
 {
-    emit configTerminated();
-    ui->statusBar->showMessage("Ready to start the annotation ...", 2000);
-    cam->start();
+    if (!cam && ui->lineEditPathOni->text() != "" &&
+            ui->lineEditPathPics->text() != "") {
+        ui->statusBar->showMessage("Ready to start the annotation ...", 2000);
+        cam = new Camera();
+        state = State::Acquisition;
+    }
 }
 
 void MainWindow::on_toolButtonPathOni_clicked()
@@ -77,12 +81,16 @@ void MainWindow::on_toolButtonPathPics_clicked()
 
 void MainWindow::on_pushButtonLeft_clicked()
 {
-    ui->spinBox->setValue(ui->spinBox->value()-1.0);
+    if (state == State::Acquisition) {
+        ui->spinBox->setValue(ui->spinBox->value()-1.0);
+    }
 }
 
 void MainWindow::on_pushButtonRight_clicked()
 {
-    ui->spinBox->setValue(ui->spinBox->value()+1.0);
+    if (state == State::Acquisition) {
+        ui->spinBox->setValue(ui->spinBox->value()+1.0);
+    }
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -111,4 +119,13 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionAbout_Qt_triggered()
 {
     QMessageBox::aboutQt(this);
+}
+
+void MainWindow::on_pushButtonExit_clicked()
+{
+    if(cam) {
+        cam->stop();
+        delete cam;
+        cam = NULL;
+    }
 }

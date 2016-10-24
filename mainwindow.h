@@ -19,8 +19,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QStateMachine>
-#include <QState>
 #include <QEventTransition>
 #include <QtWidgets>
 #include <camera.h>
@@ -54,23 +52,19 @@ private slots:
 
     void on_pushButtonStart_clicked();
 
-signals:
-    void configTerminated();
+    void on_pushButtonExit_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QStateMachine *machine;
-    QState *sStart;
-    QState *sConfig;
-    QState *sPathOni;
-    QState *sPathPic;
-    QState *sRead;
-    QState *sSave;
-    QState *sExit;
+    Camera *cam = NULL;
 
-    QEventTransition *enterTransition;
-
-    Camera *cam;
+    enum class State {
+        Stop = 0,
+        Start,
+        Acquisition,
+        Process
+    };
+    State state{State::Stop};
 };
 
 #endif // MAINWINDOW_H

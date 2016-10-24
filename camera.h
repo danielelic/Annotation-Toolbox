@@ -35,13 +35,7 @@ public:
     void stop();
     void acquisition();
 private:
-    enum class State {
-        Stop = 0,
-        Start,
-        Acquisition,
-        Process
-    };
-    State state{State::Stop};
+
 };
 
 #endif // CAMERA_H

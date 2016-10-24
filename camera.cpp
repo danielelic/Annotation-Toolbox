@@ -19,17 +19,21 @@
 
 Camera::Camera()
 {
+    start();
+}
 
+Camera::~Camera()
+{
 }
 
 void Camera::start() {
-    state = State::Start;
+    std::cout << "start" << std::endl;
 }
 
 void Camera::stop() {
-    state = State::Stop;
+    std::cout << "stop" << std::endl;
 }
 
 void Camera::acquisition() {
-    state = State::Acquisition;
+
 }

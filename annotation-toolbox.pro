@@ -22,7 +22,5 @@ DEFINES += APP_NAME=\\\"Annotation_Toolbox\\\"
 VERSION = 1.0.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
-LIBS    += -lopencv_core -lopencv_imgproc -lopencv_ml -lopencv_video \
-           -lopencv_features2d -lopencv_calib3d -lopencv_objdetect \
-           -lopencv_contrib -lopencv_legacy -lopencv_flann -lopencv_highgui \
+LIBS    += -lopencv_core -lopencv_imgproc -lopencv_highgui \
            -lOpenNI2
