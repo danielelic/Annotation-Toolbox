@@ -19,7 +19,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QEventTransition>
 #include <QtWidgets>
 #include <camera.h>
 
@@ -42,10 +41,6 @@ private slots:
 
     void on_toolButtonPathPics_clicked();
 
-    void on_pushButtonLeft_clicked();
-
-    void on_pushButtonRight_clicked();
-
     void on_actionAbout_triggered();
 
     void on_actionAbout_Qt_triggered();
@@ -54,6 +49,12 @@ private slots:
 
     void on_pushButtonExit_clicked();
 
+    void FrameReady(cv::Mat FrameImage);
+
+    void on_pushButtonNext_clicked();
+
+    void on_pushButtonCancel_clicked();
+
 private:
     Ui::MainWindow *ui;
     Camera *cam = NULL;
@@ -61,6 +62,7 @@ private:
     enum class State {
         Stop = 0,
         Start,
+        Setup,
         Acquisition,
         Process
     };

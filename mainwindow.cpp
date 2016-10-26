@@ -42,8 +42,30 @@ void MainWindow::on_pushButtonStart_clicked()
     if (!cam && ui->lineEditPathOni->text() != "" &&
             ui->lineEditPathPics->text() != "") {
         ui->statusBar->showMessage("Ready to start the annotation ...", 2000);
+        ui->pushButtonStart->setEnabled(false);
+        ui->toolButtonPathOni->setEnabled(false);
+        ui->toolButtonPathPics->setEnabled(false);
+
         cam = new Camera();
+
+        qRegisterMetaType<cv::Mat>("cv::Mat");
+        connect(cam, SIGNAL(sigFrameReady(cv::Mat)),
+                this, SLOT(FrameReady(cv::Mat)));
+        cam->setDeviceURI(ui->lineEditPathOni->text().toStdString());
+        cam->start();
+        state = State::Setup;
+        ui->statusBar->showMessage(ui->lineEditPathOni->text() +
+                                   QString(" contains %1 frames.")
+                                   .arg(cam->getTotalNoFrame()),
+                                   2000);
         state = State::Acquisition;
+        cam->acquisition();
+        ui->labelFrameCounter->setText(QString::number(cam->getFrameIndex()) +
+                                       "/" +
+                                       QString::number(cam->getTotalNoFrame()));
+    } else {
+        ui->statusBar->showMessage(
+                    "Please, set *.oni file and picture directory!", 2000);
     }
 }
 
@@ -77,20 +99,6 @@ void MainWindow::on_toolButtonPathPics_clicked()
                 QDir::homePath(),
                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     ui->lineEditPathPics->setText(dir);
-}
-
-void MainWindow::on_pushButtonLeft_clicked()
-{
-    if (state == State::Acquisition) {
-        ui->spinBox->setValue(ui->spinBox->value()-1.0);
-    }
-}
-
-void MainWindow::on_pushButtonRight_clicked()
-{
-    if (state == State::Acquisition) {
-        ui->spinBox->setValue(ui->spinBox->value()+1.0);
-    }
 }
 
 void MainWindow::on_actionAbout_triggered()
@@ -128,4 +136,29 @@ void MainWindow::on_pushButtonExit_clicked()
         delete cam;
         cam = NULL;
     }
+}
+
+void MainWindow::FrameReady(cv::Mat FrameImage)
+{
+    cv::Mat frameRGB;
+    cv::cvtColor(FrameImage.clone(), frameRGB, CV_GRAY2BGR);
+    QImage qimageBGR((uchar*)frameRGB.data,
+                     frameRGB.cols,
+                     frameRGB.rows,
+                     frameRGB.step,
+                     QImage::Format_RGB888);
+    ui->labelFrame->setPixmap(QPixmap::fromImage(qimageBGR));
+}
+
+void MainWindow::on_pushButtonNext_clicked()
+{
+    cam->acquisition();
+    ui->labelFrameCounter->setText(QString::number(cam->getFrameIndex()) +
+                                   "/" +
+                                   QString::number(cam->getTotalNoFrame()));
+}
+
+void MainWindow::on_pushButtonCancel_clicked()
+{
+
 }

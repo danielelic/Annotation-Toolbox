@@ -17,6 +17,7 @@
 
 #ifndef CAMERA_H
 #define CAMERA_H
+#include <QtCore>
 #include <stdio.h>
 #include <iostream>
 #include <vector>
@@ -25,8 +26,9 @@
 #include <OpenNI.h>
 #include <opencv2/opencv.hpp>
 
-class Camera
+class Camera : public QObject
 {
+    Q_OBJECT
 public:
     Camera();
     ~Camera();
@@ -34,8 +36,33 @@ public:
     void start();
     void stop();
     void acquisition();
-private:
+    void setup();
 
+    std::string getDeviceURI() const;
+    void setDeviceURI(const std::string &value);
+
+    int getTotalNoFrame() const;
+    void setTotalNoFrame(int value);
+
+    int getFrameIndex() const;
+    void setFrameIndex(int value);
+
+signals:
+    void sigFrameReady(cv::Mat);
+
+private:
+    std::string deviceURI;
+    openni::Device device;
+    openni::VideoStream depthStream;
+    openni::VideoFrameRef depthFrame;
+    openni::VideoFrameRef colorFrame;
+
+    openni::PlaybackControl *playbackControl;
+
+    cv::Mat depthImage;
+
+    int totalNoFrame = 0;
+    int frameIndex = 0;
 };
 
 #endif // CAMERA_H
