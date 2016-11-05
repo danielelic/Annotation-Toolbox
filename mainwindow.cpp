@@ -22,7 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    m_sSettingsFile = "settings.ini";
     ui->setupUi(this);
+    loadSettings();
     state = State::Start;
 }
 
@@ -32,13 +34,46 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::loadSettings()
+{
+    QSettings settings(m_sSettingsFile, QSettings::NativeFormat);
+    QString lineEditPathOni =
+            settings.value("lineEditPathOni", "").toString();
+    if (ui->lineEditPathOni)
+    {
+        ui->lineEditPathOni->setText(lineEditPathOni);
+    }
+    QString lineEditPathPics =
+            settings.value("lineEditPathPics", "").toString();
+    if (ui->lineEditPathPics)
+    {
+        ui->lineEditPathPics->setText(lineEditPathPics);
+    }
+}
+
+void MainWindow::saveSettings()
+{
+    QSettings settings(m_sSettingsFile, QSettings::NativeFormat);
+    QString lineEditPathOni =
+            (ui->lineEditPathOni) ? ui->lineEditPathOni->text() : "";
+    settings.setValue("lineEditPathOni", lineEditPathOni);
+    QString lineEditPathPics =
+            (ui->lineEditPathPics) ? ui->lineEditPathPics->text() : "";
+    settings.setValue("lineEditPathPics", lineEditPathPics);
+}
+
 void MainWindow::on_pushButtonSavePic_clicked()
 {
     if (cam) {
         ui->statusBar->showMessage("Saving Picture ...", 2000);
-        ui->labelFileName->setText(QString("File: %1.tiff")
-                                   .arg(QString::number(
-                                            cam->getTimestampFrame())));
+        QString number = QString("%1").arg(
+                    cam->getFrameIndex(), 5, 10, QChar('0'));
+        ui->labelFileName->setText(QString("File: %1.png")
+                                   .arg(number));
+        QString imgPath = ui->lineEditPathPics->text().toLocal8Bit()
+                + QString("/%1.png").arg(number);
+        qDebug() << imgPath;
+        cv::imwrite(imgPath.toLocal8Bit().data(), cam->getDepthImage());
     }
 }
 
@@ -46,6 +81,7 @@ void MainWindow::on_pushButtonStart_clicked()
 {
     if (!cam && ui->lineEditPathOni->text() != "" &&
             ui->lineEditPathPics->text() != "") {
+        saveSettings();
         ui->statusBar->showMessage("Ready to start the annotation ...", 2000);
         ui->pushButtonStart->setEnabled(false);
         ui->toolButtonPathOni->setEnabled(false);

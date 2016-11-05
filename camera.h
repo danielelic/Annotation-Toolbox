@@ -49,6 +49,9 @@ public:
 
     uint64_t getTimestampFrame();
 
+    cv::Mat getDepthImage() const;
+    void setDepthImage(const cv::Mat &value);
+
 signals:
     void sigFrameReady(cv::Mat);
 

@@ -76,7 +76,7 @@ void Camera::acquisition() {
     }
 
     cv::Mat depthImage8;
-    const float scaleFactor = 0.05f;
+    const float scaleFactor = 0.15f;
     depthImage.convertTo(depthImage8, CV_8UC1, scaleFactor);
 
     emit sigFrameReady(depthImage8);
@@ -119,3 +119,13 @@ uint64_t Camera::getTimestampFrame()
         return 0;
     }
 }
+cv::Mat Camera::getDepthImage() const
+{
+    return depthImage;
+}
+
+void Camera::setDepthImage(const cv::Mat &value)
+{
+    depthImage = value;
+}
+

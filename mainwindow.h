@@ -20,6 +20,8 @@
 
 #include <QMainWindow>
 #include <QtWidgets>
+#include <QSettings>
+
 #include <camera.h>
 
 namespace Ui {
@@ -67,6 +69,11 @@ private:
         Process
     };
     State state{State::Stop};
+
+    QString m_sSettingsFile;
+
+    void loadSettings();
+    void saveSettings();
 };
 
 #endif // MAINWINDOW_H
