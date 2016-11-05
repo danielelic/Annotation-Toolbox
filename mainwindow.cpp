@@ -34,7 +34,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButtonSavePic_clicked()
 {
-    ui->statusBar->showMessage("Saving Picture ...", 2000);
+    if (cam) {
+        ui->statusBar->showMessage("Saving Picture ...", 2000);
+        ui->labelFileName->setText(QString("File: %1.tiff")
+                                   .arg(QString::number(
+                                            cam->getTimestampFrame())));
+    }
 }
 
 void MainWindow::on_pushButtonStart_clicked()

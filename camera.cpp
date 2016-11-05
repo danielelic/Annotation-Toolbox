@@ -110,3 +110,12 @@ void Camera::setFrameIndex(int value)
 {
     frameIndex = value;
 }
+
+uint64_t Camera::getTimestampFrame()
+{
+    if (depthFrame.isValid()) {
+        return depthFrame.getTimestamp();
+    } else {
+        return 0;
+    }
+}

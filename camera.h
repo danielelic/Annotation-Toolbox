@@ -47,6 +47,8 @@ public:
     int getFrameIndex() const;
     void setFrameIndex(int value);
 
+    uint64_t getTimestampFrame();
+
 signals:
     void sigFrameReady(cv::Mat);
 
@@ -55,7 +57,6 @@ private:
     openni::Device device;
     openni::VideoStream depthStream;
     openni::VideoFrameRef depthFrame;
-    openni::VideoFrameRef colorFrame;
 
     openni::PlaybackControl *playbackControl;
 
